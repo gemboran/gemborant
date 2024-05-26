@@ -3,3 +3,5 @@ Include
 Scripts
 __pycache__
 ArduinoSketches
+env
+pyvenv.cfg

@@ -71,31 +71,32 @@ class AHKMouse:
             self.ahk = AHK(executable_path='C:/Program Files/AutoHotkey/v2/AutoHotkey64.exe')
         except Exception as e:
             print(colored('[Error]', 'red'), colored('AHK is not installed or not in PATH. Please install AHK and add it to PATH before retrying.', 'white'))
-            print(e)
             time.sleep(10)
             sys.exit()
 
     def move(self, x, y):
-        self.x_history.append(x)
-        self.y_history.append(y)
+        # self.x_history.append(x)
+        # self.y_history.append(y)
 
-        self.x_history.pop(0)
-        self.y_history.pop(0)
+        # self.x_history.pop(0)
+        # self.y_history.pop(0)
 
-        smooth_x = int(sum(self.x_history) / self.filter_length)
-        smooth_y = int(sum(self.y_history) / self.filter_length)
+        # smooth_x = int(sum(self.x_history) / self.filter_length)
+        # smooth_y = int(sum(self.y_history) / self.filter_length)
 
-        finalx = smooth_x + 256 if smooth_x < 0 else smooth_x
-        finaly = smooth_y + 256 if smooth_y < 0 else smooth_y
-        self.ahk.mouse_move(finalx, finaly)
+        # finalx = smooth_x + 256 if smooth_x < 0 else smooth_x
+        # finaly = smooth_y + 256 if smooth_y < 0 else smooth_y
+        # self.ahk.mouse_move(finalx, finaly)
+        time.sleep(0.001)
 
     def flick(self, x, y):
-        x = x + 256 if x < 0 else x
-        y = y + 256 if y < 0 else y
-        self.ahk.mouse_move(x, y)
+        # x = x + 256 if x < 0 else x
+        # y = y + 256 if y < 0 else y
+        # self.ahk.mouse_move(x, y)
+        time.sleep(0.001)
 
     def click(self):
-        delay = random.uniform(0.01, 0.1)
+        delay = random.uniform(0.010, 0.100)
         self.ahk.key_down('P')
         time.sleep(delay)
         self.ahk.key_up('P')

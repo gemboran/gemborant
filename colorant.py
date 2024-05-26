@@ -28,15 +28,18 @@ class Colorant:
 
     def listen(self):
         while True:
+            # check if a s d w not pressed, click
+            if win32api.GetAsyncKeyState(0x41) == 0 and win32api.GetAsyncKeyState(0x44) == 0 and win32api.GetAsyncKeyState(0x57) == 0 and win32api.GetAsyncKeyState(0x53) == 0:
+                self.process("click")
             if win32api.GetAsyncKeyState(0x71) < 0:
                 toggle_window(self)
                 time.sleep(0.2)
-            if win32api.GetAsyncKeyState(0x02) < 0 and self.toggled:
-                self.process("move")
-            elif win32api.GetAsyncKeyState(0x12) < 0 and self.toggled:
-                self.process("click")
-            elif win32api.GetAsyncKeyState(0x11) < 0 and self.toggled:
-                self.process("flick")
+            # if win32api.GetAsyncKeyState(0x02) < 0 and self.toggled:
+            #     self.process("move")
+            # elif win32api.GetAsyncKeyState(0x12) < 0 and self.toggled:
+            #     self.process("click")
+            # elif win32api.GetAsyncKeyState(0x11) < 0 and self.toggled:
+            #     self.process("flick")
 
     def process(self, action):
         screen = self.grabber.get_screen()
