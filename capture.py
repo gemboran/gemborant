@@ -20,6 +20,7 @@ class Capture:
             with self.lock:
                 self.capture_screen()
             self.update_fps()
+            time.sleep(1/60)
 
     def capture_screen(self):
         with mss() as sct:
