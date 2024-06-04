@@ -24,7 +24,7 @@ class ArduinoMouse:
             sys.exit()
 
     def find_serial_port(self):
-        port = next((port for port in serial.tools.list_ports.comports() if "Arduino" in port.description), None)
+        port = next((port for port in serial.tools.list_ports.comports() if "SERIAL" in port.description), None)
         if port is not None:
             return port.device
         else:
@@ -75,24 +75,24 @@ class AHKMouse:
             sys.exit()
 
     def move(self, x, y):
-        # self.x_history.append(x)
-        # self.y_history.append(y)
+        self.x_history.append(x)
+        self.y_history.append(y)
 
-        # self.x_history.pop(0)
-        # self.y_history.pop(0)
+        self.x_history.pop(0)
+        self.y_history.pop(0)
 
-        # smooth_x = int(sum(self.x_history) / self.filter_length)
-        # smooth_y = int(sum(self.y_history) / self.filter_length)
+        smooth_x = int(sum(self.x_history) / self.filter_length)
+        smooth_y = int(sum(self.y_history) / self.filter_length)
 
-        # finalx = smooth_x + 256 if smooth_x < 0 else smooth_x
-        # finaly = smooth_y + 256 if smooth_y < 0 else smooth_y
-        # self.ahk.mouse_move(finalx, finaly)
+        finalx = smooth_x + 256 if smooth_x < 0 else smooth_x
+        finaly = smooth_y + 256 if smooth_y < 0 else smooth_y
+        self.ahk.mouse_move(finalx, finaly)
         time.sleep(0.001)
 
     def flick(self, x, y):
-        # x = x + 256 if x < 0 else x
-        # y = y + 256 if y < 0 else y
-        # self.ahk.mouse_move(x, y)
+        x = x + 256 if x < 0 else x
+        y = y + 256 if y < 0 else y
+        self.ahk.mouse_move(x, y)
         time.sleep(0.001)
 
     def click(self):
@@ -101,3 +101,9 @@ class AHKMouse:
         time.sleep(delay)
         self.ahk.key_up('P')
         time.sleep(delay)
+        
+    def close(self):
+        time.sleep(0.001)
+
+    def __del__(self):
+        self.close()
