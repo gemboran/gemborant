@@ -1,6 +1,3 @@
-/**
- * This example turns the ESP32 into a Bluetooth LE mouse that scrolls down every 2 seconds.
- */
 #include <BleMouse.h>
 
 #define ONBOARD_LED 2
@@ -25,12 +22,15 @@ void loop() {
 
       if (Serial.available() > 0) {
         char inChar = Serial.read();
-        if (inChar == 'M')
+        if (inChar == 'M') {
           Serial.readBytes((char *)&delta, 2);
-        else if (inChar == 'C')
+        }
+        else if (inChar == 'C') {
           bleMouse.click();
+        }
+        bleMouse.move(delta[0], delta[1], delta[2]);
       }
-      bleMouse.move(delta[0], delta[1], delta[2]);
+      delay(10);
   } else {
     digitalWrite(ONBOARD_LED, HIGH);  // turn the LED on (HIGH is the voltage level)
     delay(1000);                      // wait for a second

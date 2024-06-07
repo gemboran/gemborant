@@ -16,8 +16,7 @@ class Colorant:
     UPPER_COLOR = np.array([160, 200, 255])
 
     def __init__(self, x, y, xfov, yfov, FLICKSPEED, MOVESPEED):
-        port = next((port for port in serial.tools.list_ports.comports() if "SERIAL" in port.description), None)
-        self.arduinomouse = ArduinoMouse() if port is not None else AHKMouse()
+        self.arduinomouse = AHKMouse()
         self.grabber = Capture(x, y, xfov, yfov)
         self.flickspeed = FLICKSPEED
         self.movespeed = MOVESPEED
@@ -33,7 +32,8 @@ class Colorant:
         while True:
             # check if a s d w not pressed, click
             if win32api.GetAsyncKeyState(0x41) == 0 and win32api.GetAsyncKeyState(0x44) == 0 and win32api.GetAsyncKeyState(0x57) == 0 and win32api.GetAsyncKeyState(0x53) == 0 and self.toggled:
-                self.process("flick")
+                self.process("move")
+                self.process("click")
             if win32api.GetAsyncKeyState(0x71) < 0:
                 toggle_window(self)
                 time.sleep(0.2)
@@ -78,7 +78,7 @@ class Colorant:
             flicky = y_diff * self.flickspeed
             self.arduinomouse.flick(flickx, flicky)
             self.arduinomouse.click()
-            # self.arduinomouse.flick(-(flickx), -(flicky))
+            self.arduinomouse.flick(-(flickx), -(flicky))
 
     def close(self):
         self.toggled = False
