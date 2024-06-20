@@ -1,63 +1,51 @@
-import os
-import time
-import keyboard
-import pyautogui
-from termcolor import colored
-from colorant import Colorant
+import win32api
 
-# Settings
-TOGGLE_KEY = 'F1'  # Toggle on/off colorant key
-XFOV = 50  # X-Axis FOV
-YFOV = 50  # Y-Axis FOV
-INGAME_SENSITIVITY = 0.6  # Replace this with the in-game sensitivity value
-FLICKSPEED = 1.07437623 * (INGAME_SENSITIVITY ** -0.9936827126)  # Calculate flick speed
-MOVESPEED = 1 / (5 * INGAME_SENSITIVITY)  # Calculate move speed
+from ultralytics import YOLO
 
-monitor = pyautogui.size()
-CENTER_X, CENTER_Y = monitor.width // 2, monitor.height // 2
+from utils.capture import capture
+from utils.frame_parser import frameParser
 
 
-def main():
-    os.system('title Buatan')
-    colorant = Colorant(CENTER_X - XFOV // 2, CENTER_Y - YFOV // 2, XFOV, YFOV, FLICKSPEED, MOVESPEED)
-    print(colored('''
-                     ▄████▄   ▒█████   ██▓     ▒█████   ██▀███   ▄▄▄       ███▄    █ ▄▄▄█████▓
-                    ▒██▀ ▀█  ▒██▒  ██▒▓██▒    ▒██▒  ██▒▓██ ▒ ██▒▒████▄     ██ ▀█   █ ▓  ██▒ ▓▒
-                    ▒▓█    ▄ ▒██░  ██▒▒██░    ▒██░  ██▒▓██ ░▄█ ▒▒██  ▀█▄  ▓██  ▀█ ██▒▒ ▓██░ ▒░
-                    ▒▓▓▄ ▄██▒▒██   ██░▒██░    ▒██   ██░▒██▀▀█▄  ░██▄▄▄▄██ ▓██▒  ▐▌██▒░ ▓██▓ ░ 
-                    ▒ ▓███▀ ░░ ████▓▒░░██████▒░ ████▓▒░░██▓ ▒██▒ ▓█   ▓██▒▒██░   ▓██░  ▒██▒ ░ 
-                    ░ ░▒ ▒  ░░ ▒░▒░▒░ ░ ▒░▓  ░░ ▒░▒░▒░ ░ ▒▓ ░▒▓░ ▒▒   ▓▒█░░ ▒░   ▒ ▒   ▒ ░░   
-                      ░  ▒     ░ ▒ ▒░ ░ ░ ▒  ░  ░ ▒ ▒░   ░▒ ░ ▒░  ▒   ▒▒ ░░ ░░   ░ ▒░    ░    
-                    ░        ░ ░ ░ ▒    ░ ░   ░ ░ ░ ▒    ░░   ░   ░   ▒      ░   ░ ░   ░      
-                    ░ ░          ░ ░      ░  ░    ░ ░     ░           ░  ░         ░          
-                    ░                                                                         
-                                              COLOR AIMBOT - v1.1''', 'magenta'))
-    print()
-    print(colored('[Info]', 'green'), colored('Set enemies to', 'white'), colored('Purple', 'magenta'))
-    print(colored('[Info]', 'green'),
-          colored(f'Press {colored(TOGGLE_KEY, "magenta")} to toggle ON/OFF Colorant', 'white'))
-    print(colored('[Info]', 'green'), colored(f'Press', 'white'), colored('F2', 'magenta'),
-          colored('to toggle ON/OFF Detection Window', 'white'))
-    print(colored('[Info]', 'green'), colored('RightMB', 'magenta'), colored('= Aimbot,', 'white'))
-    print(colored('[Info]', 'green'), colored('LeftAlt', 'magenta'), colored('= Triggerbot', 'white'))
-    print(colored('[Info]', 'green'), colored('LeftCtrl', 'magenta'), colored('= Silentaim', 'white'))
-    print(colored('[Info]', 'green'), colored('GitHub Repo:', 'white'),
-          '\033[35;4mhttps://github.com/gemboran/colorant-ahk\033[0m')
-    print(colored('[Info]', 'green'), colored('Made By', 'white'), colored('Hafez#6866', 'magenta'))
-    status = 'Disabled'
+def perform_detection(model, image):
+    return model.predict(
+        source=image,
+        stream=True,
+        imgsz=320,
+        stream_buffer=False,
+        visualize=False,
+        augment=False,
+        agnostic_nms=False,
+        save=False,
+        iou=0.3,
+        half=True,
+        max_det=25,
+        vid_stride=False,
+        verbose=False,
+        show_boxes=False,
+        show_labels=False,
+        show_conf=False,
+        show=False)
 
+
+def init():
     try:
-        while True:
-            if keyboard.is_pressed(TOGGLE_KEY):
-                colorant.toggle()
-                status = 'Enabled ' if colorant.toggled else 'Disabled'
-            print(f'\r{colored("[Status]", "green")} {colored(status, "white")}', end='')
-            time.sleep(0.01)
-    except (KeyboardInterrupt, SystemExit):
-        print(colored('\n[Info]', 'green'), colored('Exiting...', 'white') + '\n')
-    finally:
-        colorant.close()
+        model = YOLO(f'models/gemborant.engine', task='detect')
+    except Exception as e:
+        print('An error occurred when loading the AI model:\n', e)
+        quit(0)
+
+    while True:
+        if (
+                win32api.GetAsyncKeyState(0x41) == 0
+                and win32api.GetAsyncKeyState(0x44) == 0
+                and win32api.GetAsyncKeyState(0x57) == 0
+                and win32api.GetAsyncKeyState(0x53) == 0):
+            image = capture.get_new_frame()
+
+            result = perform_detection(model, image)
+
+            frameParser.parse(result)
 
 
 if __name__ == '__main__':
-    main()
+    init()
