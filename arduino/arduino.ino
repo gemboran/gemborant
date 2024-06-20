@@ -35,7 +35,7 @@ void loop() {
           bleMouse.release();
         }
         else if (inChar == 'X') {
-          if (bleMouse.isPressed) {
+          if (bleMouse.isPressed()) {
             bleMouse.release();
           } else {
             bleMouse.press();
