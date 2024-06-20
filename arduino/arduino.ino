@@ -28,6 +28,19 @@ void loop() {
         else if (inChar == 'C') {
           bleMouse.click();
         }
+        else if (inChar == 'P') {
+          bleMouse.press();
+        }
+        else if (inChar == 'R') {
+          bleMouse.release();
+        }
+        else if (inChar == 'X') {
+          if (bleMouse.isPressed) {
+            bleMouse.release();
+          } else {
+            bleMouse.press();
+          }
+        }
         bleMouse.move(delta[0], delta[1], delta[2]);
       }
       delay(10);
