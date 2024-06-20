@@ -17,8 +17,7 @@ class Capture:
 
         self.bc = bettercam.create(device_idx=0, output_idx=0, output_color="BGR", max_buffer_len=64,
                                    region=self.calculate_screen_offset())
-        if self.bc.is_capturing is False:
-            self.bc.start(region=self.calculate_screen_offset(custom_region=self._custom_region,
+        self.bc.start(region=self.calculate_screen_offset(custom_region=self._custom_region,
                                                               x_offset=self._offset_x,
                                                               y_offset=self._offset_y),
                           target_fps=self.prev_bettercam_capture_fps)
