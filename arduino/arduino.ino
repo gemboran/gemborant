@@ -1,8 +1,6 @@
-#include <BleMouse.h>
+#include <BleCombo.h>
 
 #define ONBOARD_LED 2
-
-BleMouse bleMouse;
 
 signed char delta[3] = {0, 0, 0};
 
@@ -10,12 +8,13 @@ void setup() {
   Serial.begin(115200);
   Serial.setTimeout(1);
 
-  bleMouse.begin();
+  Keyboard.begin();
+  Mouse.begin();
   pinMode(ONBOARD_LED, OUTPUT);
 }
 
 void loop() {
-  if(bleMouse.isConnected()) {
+  if(Keyboard.isConnected()) {
       delta[0] = 0;
       delta[1] = 0;
       delta[2] = 0;
@@ -26,22 +25,22 @@ void loop() {
           Serial.readBytes((char *)&delta, 2);
         }
         else if (inChar == 'C') {
-          bleMouse.click();
+          Mouse.click(MOUSE_LEFT);
         }
         else if (inChar == 'P') {
-          bleMouse.press();
+          Keyboard.press('P');
         }
         else if (inChar == 'R') {
-          bleMouse.release();
+          Keyboard.release('P');
         }
         else if (inChar == 'X') {
-          if (bleMouse.isPressed()) {
-            bleMouse.release();
+          if (Mouse.isPressed(MOUSE_LEFT)) {
+            Mouse.release(MOUSE_LEFT);
           } else {
-            bleMouse.press();
+            Mouse.press(MOUSE_LEFT);
           }
         }
-        bleMouse.move(delta[0], delta[1], delta[2]);
+        Mouse.move(delta[0], delta[1], delta[2]);
       }
       delay(10);
   } else {
