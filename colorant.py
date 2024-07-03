@@ -55,7 +55,7 @@ class Colorant:
 
     def process(self, action):
         screen = self.grabber.get_screen()
-        result = this.perform_detection(model, image)
+        result = self.perform_detection(model, image)
         for frame in result:
             if len(frame.boxes):
                 target = self.sort_targets(frame)
@@ -89,8 +89,8 @@ class Colorant:
         self.toggled = False
         self.window_toggled = False
     
-    def perform_detection(image):
-        return this.model.predict(
+    def perform_detection(self, image):
+        return self.model.predict(
             source=image,
             stream=True,
             imgsz=320,
@@ -110,7 +110,7 @@ class Colorant:
             show=False)
     
     @staticmethod
-    def sort_targets(frame) -> Target:
+    def sort_targets(self, frame) -> Target:
         boxes_array = frame.boxes.xywh.cuda()
         center = torch.tensor([capture.screen_x_center, capture.screen_y_center]).cuda()
         distances_sq = torch.sum((boxes_array[:, :2] - center) ** 2, dim=1)

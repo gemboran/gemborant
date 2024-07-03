@@ -102,10 +102,10 @@ class AHKMouse:
     def click(self):
         delay = random.uniform(0.010, 0.100)
         if self.arduino.active: self.arduino.press()
-        else self.ahk.key_down('P')
+        else: self.ahk.key_down('P')
         time.sleep(delay)
         if self.arduino.active: self.arduino.release()
-        else self.ahk.key_up('P')
+        else: self.ahk.key_up('P')
         time.sleep(delay)
 
     def close(self):
