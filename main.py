@@ -7,8 +7,8 @@ from colorant import Colorant
 
 # Settings
 TOGGLE_KEY = 'F1'  # Toggle on/off colorant key
-XFOV = 50  # X-Axis FOV
-YFOV = 50  # Y-Axis FOV
+XFOV = 100  # X-Axis FOV
+YFOV = 100  # Y-Axis FOV
 INGAME_SENSITIVITY = 0.6  # Replace this with the in-game sensitivity value
 FLICKSPEED = 1.07437623 * (INGAME_SENSITIVITY ** -0.9936827126)  # Calculate flick speed
 MOVESPEED = 1 / (5 * INGAME_SENSITIVITY)  # Calculate move speed
