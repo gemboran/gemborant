@@ -32,8 +32,8 @@ class Colorant:
         while True:
             # check if a s d w not pressed, click
             if win32api.GetAsyncKeyState(0x41) == 0 and win32api.GetAsyncKeyState(0x44) == 0 and win32api.GetAsyncKeyState(0x57) == 0 and win32api.GetAsyncKeyState(0x53) == 0 and self.toggled:
-                # self.process("move")
-                self.process("flick")
+                self.process("move")
+                self.process("click")
             if win32api.GetAsyncKeyState(0x71) < 0:
                 toggle_window(self)
                 time.sleep(0.2)
