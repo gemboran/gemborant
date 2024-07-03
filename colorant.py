@@ -114,7 +114,7 @@ class Colorant:
     @staticmethod
     def sort_targets(frame) -> Target:
         boxes_array = frame.boxes.xywh.cpu()
-        center = torch.tensor([capture.screen_x_center, capture.screen_y_center]).cpu()
+        center = torch.tensor([XFOV / 2, YFOV / 2]).cpu()
         distances_sq = torch.sum((boxes_array[:, :2] - center) ** 2, dim=1)
         classes_tensor = frame.boxes.cls.cpu()
         head_indices = torch.nonzero(classes_tensor == 1, as_tuple=False).squeeze(1)
