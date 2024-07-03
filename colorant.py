@@ -6,10 +6,18 @@ import win32api
 import pyautogui
 import serial
 import serial.tools.list_ports
+from ultralytics import YOLO
 
 from capture import Capture
 from mouse import AHKMouse, ArduinoMouse
 from fov_window import show_detection_window, toggle_window
+
+class Target:
+    def __init__(self, x, y, w, h):
+        self.x = x
+        self.y = y
+        self.w = w
+        self.h = h
 
 class Colorant:
     LOWER_COLOR = np.array([140, 120, 180])
@@ -23,6 +31,7 @@ class Colorant:
         threading.Thread(target=self.listen, daemon=True).start()
         self.toggled = False
         self.window_toggled = False
+        self.model = YOLO(f'gemborant.pt', task='detect')
         
     def toggle(self):
         self.toggled = not self.toggled
@@ -46,40 +55,70 @@ class Colorant:
 
     def process(self, action):
         screen = self.grabber.get_screen()
-        hsv = cv2.cvtColor(screen, cv2.COLOR_BGR2HSV)
-        mask = cv2.inRange(hsv, self.LOWER_COLOR, self.UPPER_COLOR)
-        dilated = cv2.dilate(mask, None, iterations=5)
-        contours, _ = cv2.findContours(dilated, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        result = this.perform_detection(model, image)
+        for frame in result:
+            if len(frame.boxes):
+                target = self.sort_targets(frame)
 
-        if not contours:
-            return
+                x, y, w, h = target.x, target.y, target.w, target.h
+                center = (x + w // 2, y + h // 2)
+                y_offset = int(h * 0.3)
 
-        contour = max(contours, key=cv2.contourArea)
-        x, y, w, h = cv2.boundingRect(contour)
-        center = (x + w // 2, y + h // 2)
-        y_offset = int(h * 0.3)
+                if action == "move":
+                    cX = center[0]
+                    cY = y + y_offset
+                    x_diff = cX - self.grabber.xfov // 2
+                    y_diff = cY - self.grabber.yfov // 2
+                    self.arduinomouse.move(x_diff * self.movespeed, y_diff * self.movespeed)
 
-        if action == "move":
-            cX = center[0]
-            cY = y + y_offset
-            x_diff = cX - self.grabber.xfov // 2
-            y_diff = cY - self.grabber.yfov // 2
-            self.arduinomouse.move(x_diff * self.movespeed, y_diff * self.movespeed)
+                elif action == "click" and abs(center[0] - self.grabber.xfov // 2) <= 4 and abs(center[1] - self.grabber.yfov // 2) <= 10:
+                    self.arduinomouse.click()
 
-        elif action == "click" and abs(center[0] - self.grabber.xfov // 2) <= 4 and abs(center[1] - self.grabber.yfov // 2) <= 10:
-            self.arduinomouse.click()
-
-        elif action == "flick":
-            cX = center[0] + 2
-            cY = y + y_offset
-            x_diff = cX - self.grabber.xfov // 2
-            y_diff = cY - self.grabber.yfov // 2
-            flickx = x_diff * self.flickspeed
-            flicky = y_diff * self.flickspeed
-            self.arduinomouse.flick(flickx, flicky)
-            self.arduinomouse.click()
-            self.arduinomouse.flick(-(flickx), -(flicky))
+                elif action == "flick":
+                    cX = center[0] + 2
+                    cY = y + y_offset
+                    x_diff = cX - self.grabber.xfov // 2
+                    y_diff = cY - self.grabber.yfov // 2
+                    flickx = x_diff * self.flickspeed
+                    flicky = y_diff * self.flickspeed
+                    self.arduinomouse.flick(flickx, flicky)
+                    self.arduinomouse.click()
+                    self.arduinomouse.flick(-(flickx), -(flicky))
 
     def close(self):
         self.toggled = False
         self.window_toggled = False
+    
+    def perform_detection(image):
+        return this.model.predict(
+            source=image,
+            stream=True,
+            imgsz=320,
+            stream_buffer=False,
+            visualize=False,
+            augment=False,
+            agnostic_nms=False,
+            save=False,
+            iou=0.3,
+            half=True,
+            max_det=25,
+            vid_stride=False,
+            verbose=False,
+            show_boxes=False,
+            show_labels=False,
+            show_conf=False,
+            show=False)
+    
+    @staticmethod
+    def sort_targets(frame) -> Target:
+        boxes_array = frame.boxes.xywh.cuda()
+        center = torch.tensor([capture.screen_x_center, capture.screen_y_center]).cuda()
+        distances_sq = torch.sum((boxes_array[:, :2] - center) ** 2, dim=1)
+        classes_tensor = frame.boxes.cls.cuda()
+        head_indices = torch.nonzero(classes_tensor == 1, as_tuple=False).squeeze(1)
+        if len(head_indices) > 0:
+            head_distances_sq = distances_sq[head_indices]
+            nearest_head_index = head_indices[torch.argmin(head_distances_sq)]
+            return Target(*boxes_array[nearest_head_index, :4].cpu().numpy())
+        nearest_index = torch.argmin(distances_sq)
+        return Target(*boxes_array[nearest_index, :4].cpu().numpy())
