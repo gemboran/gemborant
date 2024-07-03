@@ -92,18 +92,19 @@ class AHKMouse:
             sys.exit()
 
     def move(self, x, y):
-        if self.arduino.active: self.arduino.move(x, y)
+        self.arduino.move(x, y)
         time.sleep(0.001)
 
     def flick(self, x, y):
-        if self.arduino.active: self.arduino.flick(x, y)
-        time.sleep(0.001)
+        self.arduino.flick(x, y)
+        time.sleep(0.010)
+        self.click()
 
     def click(self):
         delay = random.uniform(0.010, 0.100)
-        self.arduino.active: self.arduino.press()
+        self.arduino.press()
         time.sleep(delay)
-        self.arduino.active: self.arduino.release()
+        self.arduino.release()
         time.sleep(delay)
 
     def close(self):
