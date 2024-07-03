@@ -55,7 +55,7 @@ class Colorant:
 
     def process(self, action):
         screen = self.grabber.get_screen()
-        result = self.perform_detection(model, image)
+        result = self.perform_detection(image)
         for frame in result:
             if len(frame.boxes):
                 target = self.sort_targets(frame)
