@@ -94,24 +94,24 @@ class Colorant:
             source=image,
             stream=True,
             imgsz=320,
-            # stream_buffer=False,
-            # visualize=False,
-            # augment=False,
-            # agnostic_nms=False,
+            stream_buffer=False,
+            visualize=False,
+            augment=False,
+            agnostic_nms=False,
             save=False,
             iou=0.3,
             half=True,
             max_det=25,
-            # vid_stride=False,
-            # verbose=False,
-            # show_boxes=False,
-            # show_labels=False,
-            # show_conf=False,
-            # show=False
+            vid_stride=False,
+            verbose=False,
+            show_boxes=False,
+            show_labels=False,
+            show_conf=False,
+            show=False
             )
     
     @staticmethod
-    def sort_targets(self, frame) -> Target:
+    def sort_targets(frame) -> Target:
         boxes_array = frame.boxes.xywh.cuda()
         center = torch.tensor([capture.screen_x_center, capture.screen_y_center]).cuda()
         distances_sq = torch.sum((boxes_array[:, :2] - center) ** 2, dim=1)
