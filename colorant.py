@@ -7,6 +7,7 @@ import pyautogui
 import serial
 import serial.tools.list_ports
 from ultralytics import YOLO
+import torch
 
 from capture import Capture
 from mouse import AHKMouse, ArduinoMouse
