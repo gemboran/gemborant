@@ -34,7 +34,7 @@ class Colorant:
         self.window_toggled = False
         self.model = YOLO(f'gemborant.pt', task='detect')
         self.center_x = xfov / 2
-        self/center_y = yfov / 2
+        self.center_y = yfov / 2
 
         
     def toggle(self):
