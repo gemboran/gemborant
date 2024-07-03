@@ -40,4 +40,4 @@ class Capture:
 
     def get_screen(self):
         with self.lock:
-            return self.screen
+            return cv2.cvtColor(self.screen, cv2.COLOR_BGRA2BGR)
