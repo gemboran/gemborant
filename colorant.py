@@ -112,10 +112,10 @@ class Colorant:
     
     @staticmethod
     def sort_targets(frame) -> Target:
-        boxes_array = frame.boxes.xywh.cuda()
-        center = torch.tensor([capture.screen_x_center, capture.screen_y_center]).cuda()
+        boxes_array = frame.boxes.xywh.cpu()
+        center = torch.tensor([capture.screen_x_center, capture.screen_y_center]).cpu()
         distances_sq = torch.sum((boxes_array[:, :2] - center) ** 2, dim=1)
-        classes_tensor = frame.boxes.cls.cuda()
+        classes_tensor = frame.boxes.cls.cpu()
         head_indices = torch.nonzero(classes_tensor == 1, as_tuple=False).squeeze(1)
         if len(head_indices) > 0:
             head_distances_sq = distances_sq[head_indices]
