@@ -33,6 +33,9 @@ class Colorant:
         self.toggled = False
         self.window_toggled = False
         self.model = YOLO(f'gemborant.pt', task='detect')
+        self.center_x = xfov / 2
+        self/center_y = yfov / 2
+
         
     def toggle(self):
         self.toggled = not self.toggled
@@ -111,10 +114,9 @@ class Colorant:
             show=False
             )
     
-    @staticmethod
-    def sort_targets(frame) -> Target:
+    def sort_targets(self, frame) -> Target:
         boxes_array = frame.boxes.xywh.cpu()
-        center = torch.tensor([XFOV / 2, YFOV / 2]).cpu()
+        center = torch.tensor([self.center_x, self.center_y]).cpu()
         distances_sq = torch.sum((boxes_array[:, :2] - center) ** 2, dim=1)
         classes_tensor = frame.boxes.cls.cpu()
         head_indices = torch.nonzero(classes_tensor == 1, as_tuple=False).squeeze(1)
