@@ -23,18 +23,21 @@ class ArduinoMouse:
             self.active = True
         except serial.SerialException:
             print(colored('[Error]', 'red'), colored(
-                'Colorant is already open or serial port in use by another app. Close Colorant and other apps before retrying.',
+                'Colorant is already open or serial port in use by another app. Close Colorant and other apps before '
+                'retrying.',
                 'white'))
             time.sleep(10)
             # sys.exit()
 
-    def find_serial_port(self):
+    @staticmethod
+    def find_serial_port():
         port = next((port for port in serial.tools.list_ports.comports() if "SERIAL" in port.description), None)
         if port is not None:
             return port.device
         else:
             print(colored('[Error]', 'red'), colored(
-                'Unable to find serial port or the Arduino device is with different name. Please check its connection and try again.',
+                'Unable to find serial port or the Arduino device is with different name. Please check its connection '
+                'and try again.',
                 'white'))
             time.sleep(10)
             # sys.exit()
