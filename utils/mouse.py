@@ -1,6 +1,5 @@
 import time
-from arduino_mk.constants import *
-from arduino_mk import Arduino
+from utils.arduino import *
 import serial.tools.list_ports
 
 
