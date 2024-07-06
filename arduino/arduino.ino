@@ -12,6 +12,7 @@ const uint8_t MOUSE_CLICK          = 0xE4;
 const uint8_t MOUSE_FAST_CLICK     = 0xE5;
 const uint8_t MOUSE_MOVE           = 0xE6;
 const uint8_t MOUSE_BEZIER         = 0xE7;
+const uint8_t MOUSE_TO             = 0xE8;
 
 const uint8_t LEFT_BUTTON          = 0xEA; 
 const uint8_t RIGHT_BUTTON         = 0xEB;
@@ -92,12 +93,16 @@ void parseMouseCommand()
       
       switch (command)
       {
-        case MOUSE_MOVE:
+        case MOUSE_TO:
           besenhamMove(destination);
           break;
         
         case MOUSE_BEZIER:
           bezierMove(destination);
+          break;
+
+        case MOUSE_MOVE:
+          Mouse.move(destination.x, destination.y);
           break;
       }
   }
