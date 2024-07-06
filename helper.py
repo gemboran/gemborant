@@ -321,7 +321,7 @@ if __name__ == "__main__":
         from logic.config_watcher import cfg
     except:
         print('File config_watcher.py not found, reinstalling...')
-        update_yolov8_aimbot()
+        # update_yolov8_aimbot()
     upgrade_pip()
     upgrade_ultralytics()
     main()
