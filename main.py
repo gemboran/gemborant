@@ -29,7 +29,7 @@ def perform_detection(model, image):
 
 def init():
     try:
-        model = YOLO(f'models/gemborant.engine', task='detect')
+        model = YOLO(f'models/gemborant.pt', task='detect')
     except Exception as e:
         print('An error occurred when loading the AI model:\n', e)
         quit(0)

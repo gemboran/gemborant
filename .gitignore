@@ -5,3 +5,8 @@ __pycache__
 ArduinoSketches
 env
 pyvenv.cfg
+cuda_12.4.0_551.61_windows.exe
+.idea
+.ipynb_checkpoints
+__MACOSX
+.vscode

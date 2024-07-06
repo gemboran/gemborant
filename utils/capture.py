@@ -2,6 +2,13 @@ import bettercam
 from screeninfo import get_monitors
 
 
+def get_primary_display_resolution():
+    _ = get_monitors()
+    for m in _:
+        if m.is_primary:
+            return m.width, m.height
+
+
 class Capture:
     def __init__(self):
         self._custom_region = []
@@ -17,7 +24,7 @@ class Capture:
 
         self.bc = bettercam.create(device_idx=0, output_idx=0, output_color="BGR", max_buffer_len=64,
                                    region=self.calculate_screen_offset())
-        if self.bc.is_capturing == False:
+        if not self.bc.is_capturing:
             self.bc.start(region=self.calculate_screen_offset(custom_region=self._custom_region,
                                                               x_offset=self._offset_x,
                                                               y_offset=self._offset_y),
@@ -35,7 +42,7 @@ class Capture:
             y_offset = 0
 
         if len(custom_region) <= 0:
-            left, top = self.get_primary_display_resolution()
+            left, top = get_primary_display_resolution()
         else:
             left, top = custom_region
 
@@ -45,13 +52,6 @@ class Capture:
         height = top + self.prev_detection_window_height
 
         return int(left), int(top), int(width), int(height)
-
-    @staticmethod
-    def get_primary_display_resolution():
-        _ = get_monitors()
-        for m in _:
-            if m.is_primary:
-                return m.width, m.height
 
 
 capture = Capture()

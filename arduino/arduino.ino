@@ -3,6 +3,8 @@
 
 #define ONBOARD_LED 2
 
+const uint8_t BYTES_MODIFIER       = 32768;
+
 const uint8_t MOUSE_CMD            = 0xE0;
 const uint8_t MOUSE_CALIBRATE      = 0xE1;
 const uint8_t MOUSE_PRESS          = 0xE2;
@@ -102,7 +104,7 @@ void parseMouseCommand()
           break;
 
         case MOUSE_MOVE:
-          Mouse.move(destination.x, destination.y);
+          Mouse.move(destination.x - BYTES_MODIFIER, destination.y - BYTES_MODIFIER);
           break;
       }
   }

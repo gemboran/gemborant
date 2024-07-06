@@ -1,6 +1,9 @@
+import random
 import time
 from utils.arduino import *
 import serial.tools.list_ports
+
+from utils.capture import get_primary_display_resolution
 
 
 class MouseThread:
@@ -18,12 +21,14 @@ class MouseThread:
         self.prev_y = 0
         self.arduino = Arduino(port=self.find_serial_port())
 
-    def find_serial_port(self):
+    @staticmethod
+    def find_serial_port():
         port = next((port for port in serial.tools.list_ports.comports() if "SERIAL" in port.description), None)
         if port is not None:
             return port.device
         else:
-            print('Unable to find serial port or the Arduino device is with different name. Please check its connection and try again.')
+            print('Unable to find serial port or the Arduino device is with different name. Please check its '
+                  'connection and try again.')
 
     def process_data(self, data):
         target_x, target_y, target_w, target_h = data
