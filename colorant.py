@@ -1,17 +1,14 @@
-import cv2
 import numpy as np
 import threading
 import time
 import win32api
-import pyautogui
-import serial
-import serial.tools.list_ports
 from ultralytics import YOLO
 import torch
 
-from capture import Capture
-from mouse import AHKMouse, ArduinoMouse
-from fov_window import show_detection_window, toggle_window
+from utils.capture import Capture
+from utils.mouse import AHKMouse
+from utils.fov_window import toggle_window
+
 
 class Target:
     def __init__(self, x, y, w, h):
@@ -20,42 +17,38 @@ class Target:
         self.w = w
         self.h = h
 
+
 class Colorant:
     LOWER_COLOR = np.array([140, 120, 180])
     UPPER_COLOR = np.array([160, 200, 255])
 
-    def __init__(self, x, y, xfov, yfov, FLICKSPEED, MOVESPEED):
-        self.arduinomouse = AHKMouse()
-        self.grabber = Capture(x, y, xfov, yfov)
-        self.flickspeed = FLICKSPEED
-        self.movespeed = MOVESPEED
+    def __init__(self, x, y, x_fov, y_fov, flick_speed, move_speed):
+        self.arduino_mouse = AHKMouse()
+        self.grabber = Capture(x, y, x_fov, y_fov)
+        self.flick_speed = flick_speed
+        self.move_speed = move_speed
         threading.Thread(target=self.listen, daemon=True).start()
         self.toggled = False
         self.window_toggled = False
-        self.model = YOLO(f'gemborant.pt', task='detect')
-        self.center_x = xfov / 2
-        self.center_y = yfov / 2
+        self.model = YOLO(f'models/gemborant.pt', task='detect')
+        self.center_x = x_fov / 2
+        self.center_y = y_fov / 2
 
-        
     def toggle(self):
         self.toggled = not self.toggled
         time.sleep(0.2)
 
     def listen(self):
         while True:
-            # check if a s d w not pressed, click
-            if win32api.GetAsyncKeyState(0x41) == 0 and win32api.GetAsyncKeyState(0x44) == 0 and win32api.GetAsyncKeyState(0x57) == 0 and win32api.GetAsyncKeyState(0x53) == 0 and self.toggled:
+            # check if A S D W key not pressed, click
+            if win32api.GetAsyncKeyState(0x41) == 0 and win32api.GetAsyncKeyState(
+                    0x44) == 0 and win32api.GetAsyncKeyState(0x57) == 0 and win32api.GetAsyncKeyState(
+                    0x53) == 0 and self.toggled:
                 self.process("move")
                 self.process("click")
             if win32api.GetAsyncKeyState(0x71) < 0:
                 toggle_window(self)
                 time.sleep(0.2)
-            # if win32api.GetAsyncKeyState(0x02) < 0 and self.toggled:
-            #     self.process("move")
-            # elif win32api.GetAsyncKeyState(0x12) < 0 and self.toggled:
-            #     self.process("click")
-            # elif win32api.GetAsyncKeyState(0x11) < 0 and self.toggled:
-            #     self.process("flick")
 
     def process(self, action):
         screen = self.grabber.get_screen()
@@ -69,30 +62,30 @@ class Colorant:
                 y_offset = int(h * 0.3)
 
                 if action == "move":
-                    cX = center[0]
-                    cY = y + y_offset
-                    x_diff = cX - self.grabber.xfov // 2
-                    y_diff = cY - self.grabber.yfov // 2
-                    self.arduinomouse.move(x_diff * self.movespeed, y_diff * self.movespeed)
+                    c_x = center[0]
+                    c_y = y + y_offset
+                    x_diff = c_x - self.grabber.x_fov // 2
+                    y_diff = c_y - self.grabber.y_fov // 2
+                    self.arduino_mouse.move(x_diff * self.move_speed, y_diff * self.move_speed)
 
-                elif action == "click" and abs(center[0] - self.grabber.xfov // 2) <= 4 and abs(center[1] - self.grabber.yfov // 2) <= 10:
-                    self.arduinomouse.click()
+                elif action == "click" and abs(center[0] - self.grabber.x_fov // 2) <= 4 and abs(
+                        center[1] - self.grabber.y_fov // 2) <= 10:
+                    self.arduino_mouse.click()
 
                 elif action == "flick":
-                    cX = center[0] + 2
-                    cY = y + y_offset
-                    x_diff = cX - self.grabber.xfov // 2
-                    y_diff = cY - self.grabber.yfov // 2
-                    flickx = x_diff * self.flickspeed
-                    flicky = y_diff * self.flickspeed
-                    self.arduinomouse.flick(flickx, flicky)
-                    self.arduinomouse.click()
-                    self.arduinomouse.flick(-(flickx), -(flicky))
+                    c_x = center[0] + 2
+                    c_y = y + y_offset
+                    x_diff = c_x - self.grabber.x_fov // 2
+                    y_diff = c_y - self.grabber.y_fov // 2
+                    flick_x = x_diff * self.flick_speed
+                    flick_y = y_diff * self.flick_speed
+                    self.arduino_mouse.flick(flick_x, flick_y)
+                    self.arduino_mouse.click()
 
     def close(self):
         self.toggled = False
         self.window_toggled = False
-    
+
     def perform_detection(self, image):
         return self.model.predict(
             source=image,
@@ -112,8 +105,8 @@ class Colorant:
             show_labels=False,
             show_conf=False,
             show=False
-            )
-    
+        )
+
     def sort_targets(self, frame) -> Target:
         boxes_array = frame.boxes.xywh.cpu()
         center = torch.tensor([self.center_x, self.center_y]).cpu()
