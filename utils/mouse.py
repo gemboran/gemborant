@@ -1,5 +1,6 @@
 import time
-import serial
+from arduino_mk.constants import *
+from arduino_mk import Arduino
 import serial.tools.list_ports
 
 
@@ -16,11 +17,7 @@ class MouseThread:
         self.prev_time = None
         self.prev_x = 0
         self.prev_y = 0
-        self.serial = serial.Serial()
-        self.serial.baudrate = 115200
-        self.serial.timeout = 1
-        self.serial.port = self.find_serial_port()
-        self.serial.open()
+        self.arduino = Arduino(port=self.find_serial_port())
 
     def find_serial_port(self):
         port = next((port for port in serial.tools.list_ports.comports() if "SERIAL" in port.description), None)
@@ -80,19 +77,17 @@ class MouseThread:
     def move_mouse(self, x, y):
         if x is None or y is None:
             return
-        x = x + 256 if x < 0 else x
-        y = y + 256 if y < 0 else y
-        self.serial.write(b"M" + bytes([int(x), int(y)]))
+        self.arduino.move(int(x), int(y))
 
     def shoot(self, shoot):
         if self.bScope:
             delay = random.uniform(0.010, 0.100)
             if shoot:
-                self.serial.write(b"P")
+                self.arduino.press("P")
                 time.sleep(delay)
-                self.serial.write(b"R")
+                self.arduino.release("P")
             else:
-                self.serial.write(b"R")
+                self.arduino.release("R")
             time.sleep(delay)
 
 
