@@ -32,17 +32,11 @@ class Colorant:
         while True:
             # check if a s d w not pressed, click
             if win32api.GetAsyncKeyState(0x41) == 0 and win32api.GetAsyncKeyState(0x44) == 0 and win32api.GetAsyncKeyState(0x57) == 0 and win32api.GetAsyncKeyState(0x53) == 0 and self.toggled:
-                self.process("move")
-                self.process("click")
+                # self.process("move")
+                self.process("flick")
             if win32api.GetAsyncKeyState(0x71) < 0:
                 toggle_window(self)
                 time.sleep(0.2)
-            # if win32api.GetAsyncKeyState(0x02) < 0 and self.toggled:
-            #     self.process("move")
-            # elif win32api.GetAsyncKeyState(0x12) < 0 and self.toggled:
-            #     self.process("click")
-            # elif win32api.GetAsyncKeyState(0x11) < 0 and self.toggled:
-            #     self.process("flick")
 
     def process(self, action):
         screen = self.grabber.get_screen()
@@ -65,6 +59,7 @@ class Colorant:
             x_diff = cX - self.grabber.xfov // 2
             y_diff = cY - self.grabber.yfov // 2
             self.arduinomouse.move(x_diff * self.movespeed, y_diff * self.movespeed)
+            self.process("click")
 
         elif action == "click" and abs(center[0] - self.grabber.xfov // 2) <= 4 and abs(center[1] - self.grabber.yfov // 2) <= 10:
             self.arduinomouse.click()
@@ -82,3 +77,4 @@ class Colorant:
     def close(self):
         self.toggled = False
         self.window_toggled = False
+        self.arduinomouse.close()

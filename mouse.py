@@ -82,7 +82,6 @@ class AHKMouse:
         self.x_history = [0] * filter_length
         self.y_history = [0] * filter_length
         try:
-            self.ahk = AHK(executable_path='C:/Program Files/AutoHotkey/v2/AutoHotkey64.exe')
             self.arduino = ArduinoMouse()
         except Exception as e:
             print(colored('[Error]', 'red'),
@@ -108,6 +107,7 @@ class AHKMouse:
         time.sleep(delay)
 
     def close(self):
+        self.arduino.close()
         time.sleep(0.001)
 
     def __del__(self):

@@ -20,29 +20,23 @@ CENTER_X, CENTER_Y = monitor.width // 2, monitor.height // 2
 def main():
     os.system('title Buatan')
     colorant = Colorant(CENTER_X - XFOV // 2, CENTER_Y - YFOV // 2, XFOV, YFOV, FLICKSPEED, MOVESPEED)
-    print(colored('''
-                     ▄████▄   ▒█████   ██▓     ▒█████   ██▀███   ▄▄▄       ███▄    █ ▄▄▄█████▓
-                    ▒██▀ ▀█  ▒██▒  ██▒▓██▒    ▒██▒  ██▒▓██ ▒ ██▒▒████▄     ██ ▀█   █ ▓  ██▒ ▓▒
-                    ▒▓█    ▄ ▒██░  ██▒▒██░    ▒██░  ██▒▓██ ░▄█ ▒▒██  ▀█▄  ▓██  ▀█ ██▒▒ ▓██░ ▒░
-                    ▒▓▓▄ ▄██▒▒██   ██░▒██░    ▒██   ██░▒██▀▀█▄  ░██▄▄▄▄██ ▓██▒  ▐▌██▒░ ▓██▓ ░ 
-                    ▒ ▓███▀ ░░ ████▓▒░░██████▒░ ████▓▒░░██▓ ▒██▒ ▓█   ▓██▒▒██░   ▓██░  ▒██▒ ░ 
-                    ░ ░▒ ▒  ░░ ▒░▒░▒░ ░ ▒░▓  ░░ ▒░▒░▒░ ░ ▒▓ ░▒▓░ ▒▒   ▓▒█░░ ▒░   ▒ ▒   ▒ ░░   
-                      ░  ▒     ░ ▒ ▒░ ░ ░ ▒  ░  ░ ▒ ▒░   ░▒ ░ ▒░  ▒   ▒▒ ░░ ░░   ░ ▒░    ░    
-                    ░        ░ ░ ░ ▒    ░ ░   ░ ░ ░ ▒    ░░   ░   ░   ▒      ░   ░ ░   ░      
-                    ░ ░          ░ ░      ░  ░    ░ ░     ░           ░  ░         ░          
-                    ░                                                                         
-                                              COLOR AIMBOT - v1.1''', 'magenta'))
+    print(colored(
+'''
+░██████╗░███████╗███╗░░░███╗██████╗░░█████╗░██████╗░░█████╗░███╗░░██╗████████╗
+██╔════╝░██╔════╝████╗░████║██╔══██╗██╔══██╗██╔══██╗██╔══██╗████╗░██║╚══██╔══╝
+██║░░██╗░█████╗░░██╔████╔██║██████╦╝██║░░██║██████╔╝███████║██╔██╗██║░░░██║░░░
+██║░░╚██╗██╔══╝░░██║╚██╔╝██║██╔══██╗██║░░██║██╔══██╗██╔══██║██║╚████║░░░██║░░░
+╚██████╔╝███████╗██║░╚═╝░██║██████╦╝╚█████╔╝██║░░██║██║░░██║██║░╚███║░░░██║░░░
+░╚═════╝░╚══════╝╚═╝░░░░░╚═╝╚═════╝░░╚════╝░╚═╝░░╚═╝╚═╝░░╚═╝╚═╝░░╚══╝░░░╚═╝░░░
+''', 'magenta'))
     print()
     print(colored('[Info]', 'green'), colored('Set enemies to', 'white'), colored('Purple', 'magenta'))
     print(colored('[Info]', 'green'),
           colored(f'Press {colored(TOGGLE_KEY, "magenta")} to toggle ON/OFF Colorant', 'white'))
     print(colored('[Info]', 'green'), colored(f'Press', 'white'), colored('F2', 'magenta'),
           colored('to toggle ON/OFF Detection Window', 'white'))
-    print(colored('[Info]', 'green'), colored('RightMB', 'magenta'), colored('= Aimbot,', 'white'))
-    print(colored('[Info]', 'green'), colored('LeftAlt', 'magenta'), colored('= Triggerbot', 'white'))
-    print(colored('[Info]', 'green'), colored('LeftCtrl', 'magenta'), colored('= Silentaim', 'white'))
     print(colored('[Info]', 'green'), colored('GitHub Repo:', 'white'),
-          '\033[35;4mhttps://github.com/gemboran/colorant-ahk\033[0m')
+          '\033[35;4mhttps://github.com/gemboran/gemborant\033[0m')
     print(colored('[Info]', 'green'), colored('Made By', 'white'), colored('Hafez#6866', 'magenta'))
     status = 'Disabled'
 
